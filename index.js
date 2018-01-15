@@ -113,7 +113,8 @@ var barcoProjector = function() {
 
 					if ((pos+2 < data.length && data.readUInt8(pos+2) == 255) || read == 0) {
 						chunk.data = utf8.decode(chunk.data);
-						if (chunk.data.substr(0,5) == '<?xml') {
+						if (chunk.data.substr(0,5).match(/<?/)) {
+
 							var options = {
 						    object: false,
 						    reversible: false,
@@ -123,7 +124,15 @@ var barcoProjector = function() {
 						    arrayNotation: false,
 						    alternateTextNode: false
 							};
-							chunk.data = parser.toJson(chunk.data, options);
+
+							var offset = 0;
+
+							if (chunk.data.substr(0,5).match(/^..</)) {
+								offset += 2;
+							}
+
+							var newbuf = new Buffer(chunk.data.substr(0+offset,5))
+							chunk.data = parser.toJson(chunk.data.substr(0+offset), options);
 						}
 						chunks[current_chunk] = chunk;
 						current_chunk++;
@@ -165,11 +174,13 @@ var barcoProjector = function() {
 	}
 
 	self.on('data', function(chunk) {
-		console.log("data:", chunk.data);
+		var queue = self.requestQueue.shift();
+		self.inTransaction = false;
+		queue[1](null, chunk.data);
+		self.processRequestQueue();
 	});
 
 	self.processRequestQueue = function() {
-		console.log("self.processRequestQueue():", self.requestQueue.length, self.requestQueue);
 		if (self.requestQueue.length > 0 && !self.inTransaction) {
 			self.inTransaction = true;
 			var data = new Buffer( cmds[self.requestQueue[0][0]] );
