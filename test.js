@@ -27,3 +27,31 @@ pj.request('voltages', function(err, res) {
 pj.request('notifications', function(err, res) {
 	console.log("notifications", res);
 });
+
+pj.request('signalDVI', function(err, res) {
+	console.log("signalDVI", res);
+});
+
+pj.request('signalSDI', function(err, res) {
+	console.log("signalSDI", res);
+});
+
+pj.request('signalMod1', function(err, res) {
+	console.log("signalMod1", res);
+});
+
+pj.request('signalMod2', function(err, res) {
+	console.log("signalMod2", res);
+});
+
+pj.request('customerId', function(err, res) {
+	console.log("customerId", res);
+});
+
+pj.request('projectorType', function(err, res) {
+	console.log("projectorType", res);
+});
+
+pj.request('projectorSerial', function(err, res) {
+	console.log("projectorSerial", res);
+});
