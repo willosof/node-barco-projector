@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016-2017, William Viker <william.viker@gmail.com>
+Copyright (c) 2018, William Viker <william.viker@gmail.com>
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
 
@@ -32,27 +32,22 @@ var cmds = {
 	projectorSerial: [ 0xfe, 0x00, 0x61, 0x61, 0xff ],
 };
 
-function toHex(str) {
-	var hex = '';
-	for(var i=0;i<str.length;i++) {
-		hex += ' '+str.charCodeAt(i).toString(16);
-	}
-	return hex;
-}
-
-
 var barcoProjector = function() {
 
 	EventEmitter.call(this);
 
 	var self = this;
+
 	self.connected = false;
 	self.requestQueue = [];
 	self.inTransaction = false;
 
 	self.connect = function(ip) {
+
 		self.ip = ip;
+
 		if (self.socket !== undefined) { self.socket.destroy(); }
+
 		self.socket = new net.Socket();
 		self.connected = false;
 		self.inTransaction = false;
@@ -70,20 +65,24 @@ var barcoProjector = function() {
 			var buffer;
 
 			if (data.slice(-1).readUInt8(0,1) == 0xFF) {
+
 				if (self.buffers.length > 0) {
 					self.buffers.push(data);
 					buffer = Buffer.concat(self.buffers);
 					self.buffers = [];
 				}
+
 				else {
 					buffer = data;
 				}
+
 				self.processData(buffer);
+
 			}
+
 			else {
 				self.buffers.push(data);
 			}
-
 
 		});
 
@@ -114,9 +113,12 @@ var barcoProjector = function() {
 
 						chunk = { cmd1: cmd1, cmd2: cmd2, data: '' };
 						pos += 2;
+
+						// seriously, this is getting out of hand.
 						if (data.slice(pos+2,pos+3).equals(new Buffer([0x01]))) {
 							pos += 2;
 						}
+
 						incommand = 1;
 					}
 
@@ -142,16 +144,20 @@ var barcoProjector = function() {
 
 							var offset = 0;
 
+							// move along, just another haxation.
 							if (chunk.data.substr(0,5).match(/^..</)) {
 								offset += 2;
 							}
 
 							var newbuf = new Buffer(chunk.data.substr(0+offset,5))
 							chunk.data = parser.toJson(chunk.data.substr(0+offset), options);
+
 						}
+
 						chunks[current_chunk] = chunk;
 						current_chunk++;
 						incommand = 0;
+
 						if (read != 0) { pos += 2; }
 
 					}
@@ -171,7 +177,6 @@ var barcoProjector = function() {
 			chunks = [];
 
 		}
-
 
 		self.socket.on('close', function() {
 			self.connected = false;
