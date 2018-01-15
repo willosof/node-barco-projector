@@ -43,7 +43,6 @@ var barcoProjector = function() {
 	self.inTransaction = false;
 
 	self.connect = function(ip) {
-
 		self.ip = ip;
 
 		if (self.socket !== undefined) { self.socket.destroy(); }
@@ -86,8 +85,13 @@ var barcoProjector = function() {
 
 		});
 
+		self.reconnect = function() {
+			self.connect(self.ip);
+		};
+
 		self.processData = function(data) {
 
+			var self = this;
 			var incommand = 0;
 			var pos = 0;
 			var current_chunk = 0;
