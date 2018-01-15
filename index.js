@@ -26,6 +26,15 @@ var cmds = {
 	projectorSerial: [ 0xfe, 0x00, 0x61, 0x61, 0xff ],
 };
 
+function toHex(str) {
+	var hex = '';
+	for(var i=0;i<str.length;i++) {
+		hex += ' '+str.charCodeAt(i).toString(16);
+	}
+	return hex;
+}
+
+
 var barcoProjector = function() {
 
 	EventEmitter.call(this);
@@ -44,7 +53,6 @@ var barcoProjector = function() {
 		self.buffers = [];
 
 		self.socket.connect(43680, ip, function() {
-			console.log('connected', ip);
 			self.connected = true;
 			self.buffers = [];
 			self.emit('connect', ip);
@@ -113,7 +121,8 @@ var barcoProjector = function() {
 
 					if ((pos+2 < data.length && data.readUInt8(pos+2) == 255) || read == 0) {
 						chunk.data = utf8.decode(chunk.data);
-						if (chunk.data.substr(0,5).match(/<?/)) {
+
+						if (chunk.data.substr(0,5).match(/<\?x/)) {
 
 							var options = {
 						    object: false,
@@ -159,13 +168,11 @@ var barcoProjector = function() {
 
 
 		self.socket.on('close', function() {
-			console.log('disconnected: close')
 			self.connected = false;
 			self.emit('disconnect');
 		});
 
 		self.socket.on('end', function() {
-			console.log('disconnected: end')
 			self.connected = false;
 			self.emit('disconnect');
 		});
