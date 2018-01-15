@@ -9,7 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 var net = require('net');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
-
+var utf8 = require('utf8');
+var parser = require('xml2json');
 
 var cmds = {
 	temperatures:    [ 0xfe, 0x00, 0x81, 0x03, 0x01, 0x85, 0xff ],
@@ -40,15 +41,39 @@ var barcoProjector = function() {
 		self.socket = new net.Socket();
 		self.connected = false;
 		self.inTransaction = false;
+		self.buffers = [];
 
 		self.socket.connect(43680, ip, function() {
 			console.log('connected', ip);
 			self.connected = true;
+			self.buffers = [];
 			self.emit('connect', ip);
 			self.processRequestQueue();
 		});
 
 		self.socket.on('data', function(data) {
+
+			var buffer;
+
+			if (data.slice(-1).readUInt8(0,1) == 0xFF) {
+				if (self.buffers.length > 0) {
+					self.buffers.push(data);
+					buffer = Buffer.concat(self.buffers);
+					self.buffers = [];
+				}
+				else {
+					buffer = data;
+				}
+				self.processData(buffer);
+			}
+			else {
+				self.buffers.push(data);
+			}
+
+
+		});
+
+		self.processData = function(data) {
 
 			var incommand = 0;
 			var pos = 0;
@@ -56,59 +81,73 @@ var barcoProjector = function() {
 			var chunks = {};
 			var chunk = {};
 
-			console.log("begin", data.length, data);
-
 			while(data.length > pos) {
 
 				if (incommand == 0) {
-					console.log("pos",pos,"incommand=0");
 
 					var request_buffer = new Buffer( [0xfe, 0x00, 0x00, 0x06, 0x06, 0xff] );
 					var reply_buffer   = new Buffer( [0xfe, 0x00] );
 
 					if (data.slice(pos,pos+6).equals(request_buffer)) {
-						console.log("Acknowledge");
 						pos += 5;
 					}
 
 					if (data.slice(pos,pos+2).equals(reply_buffer)) {
-						console.log("Reply");
 
 						var cmd1 = data.readUInt8(pos+2);
 						var cmd2 = data.readUInt8(pos+3);
 						var unkn = data.readUInt8(pos+4);
-						console.log("cmd12un", cmd1, cmd2, unkn)
+
 						chunk = { cmd1: cmd1, cmd2: cmd2, data: '' };
-
 						pos += 2;
+						if (data.slice(pos+2,pos+3).equals(new Buffer([0x01]))) {
+							pos += 2;
+						}
 						incommand = 1;
-
 					}
 
 				}
 				else {
 
 					var read = data.readUInt8(pos);
-					if (read > 0) {
-						chunk.data += String.fromCharCode(read);
-						console.log("CHUNK DATA",read,chunk.data);
 
-					}
-					else {
-						console.log("complete")
+					if ((pos+2 < data.length && data.readUInt8(pos+2) == 255) || read == 0) {
+						chunk.data = utf8.decode(chunk.data);
+						if (chunk.data.substr(0,5) == '<?xml') {
+							var options = {
+						    object: false,
+						    reversible: false,
+						    coerce: false,
+						    sanitize: true,
+						    trim: true,
+						    arrayNotation: false,
+						    alternateTextNode: false
+							};
+							chunk.data = parser.toJson(chunk.data, options);
+						}
 						chunks[current_chunk] = chunk;
 						current_chunk++;
 						incommand = 0;
+						if (read != 0) { pos += 2; }
+
+					}
+
+					else {
+						chunk.data += String.fromCharCode(read);
 					}
 
 				}
 				pos++;
-				console.log("pos",pos);
 			}
 
+			for (var i in chunks) {
+				self.emit('data', chunks[i]);
+			}
 
+			chunks = [];
 
-		});
+		}
+
 
 		self.socket.on('close', function() {
 			console.log('disconnected: close')
@@ -124,6 +163,10 @@ var barcoProjector = function() {
 
 		return;
 	}
+
+	self.on('data', function(chunk) {
+		console.log("data:", chunk.data);
+	});
 
 	self.processRequestQueue = function() {
 		console.log("self.processRequestQueue():", self.requestQueue.length, self.requestQueue);

@@ -12,7 +12,7 @@ pj.on('disconnect', function() {
 
 pj.connect('10.20.34.46')
 
-pj.request('projectorType', function(err, res) {
+pj.request('temperatures', function(err, res) {
 	console.log("err", err);
 	console.log("res", res);
 });

@@ -13,11 +13,13 @@
     "udx",
     "hdf",
     "hdq",
-		"projector"
+    "projector"
   ],
   "author": "William Viker <william.viker@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "utf8": "^3.0.0",
+    "xml2json": "^0.11.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
