@@ -137,7 +137,7 @@ var barcoProjector = function() {
 						if (chunk.data.substr(0,5).match(/<\?x/)) {
 
 							var options = {
-						    object: false,
+						    object: true,
 						    reversible: false,
 						    coerce: false,
 						    sanitize: true,
