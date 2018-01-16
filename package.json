@@ -1,10 +1,9 @@
 {
   "name": "barco-projector",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Unofficial Node.js API for Barco UDX/HDF/HDX/HDQ projectors",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
     "start": "node index.js"
   },
   "keywords": [
@@ -16,7 +15,7 @@
     "projector"
   ],
   "author": "William Viker <william.viker@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "utf8": "^3.0.0",
     "xml2json": "^0.11.0"
@@ -27,10 +26,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/willosof/barco-projector.git"
+    "url": "git+https://github.com/willosof/node-barco-projector.git"
   },
   "bugs": {
-    "url": "https://github.com/willosof/barco-projector/issues"
+    "url": "https://github.com/willosof/node-barco-projector/issues"
   },
-  "homepage": "https://github.com/willosof/barco-projector#readme"
+  "homepage": "https://github.com/willosof/node-barco-projector#readme"
 }

@@ -8,35 +8,45 @@
 [![GitHub stars](https://img.shields.io/github/stars/willosof/barco-projector.svg?style=plastic)](https://github.com/willosof/barco-projector/stargazers)
 
 ## Features
-* **getStations(result_cb)**
-List all stations in the system. Here you'll get the id's you need to make sense of getAvailability() and getAvailabilityByStationId()
+
+Get temperatures, fan speeds and voltages from Barco Projectors. (Tested with HDX W20)
 
 ### Getting Started
-
-First, ...
-
-In Node.js:
 
 ```
 npm install barco-projector
 ```
 
+Example usage:
 ```javascript
 var Projector = require('barco-projector');
-var pj = new Projector('192.168.0.2');
+var pj = new Projector();
 
-// Get all stations and their IDs
-pj.getInfo('temperatures', response => {
-	console.log(response);
+pj.on('connect', function(ip) {
+	console.log("connected to",ip);
 });
+
+pj.on('disconnect', function() {
+	console.log('disconnected from projector');
+	pj.reconnect(); // try reconnecting
+});
+
+pj.connect('10.20.34.46');
+
+pj.request('temperatures', function(err, res) {
+	if (!err) {
+		console.log("current temperatures: ", res);
+	}
+});
+
 ```
 
 ### Git
-* [https://github.com/willosof/barco-projector](https://github.com/willosof/barco-projector)
-* `git@github.com:willosof/barco-projector.git`
+* [https://github.com/willosof/barco-projector](https://github.com/willosof/node-barco-projector)
+* `git@github.com:willosof/node-barco-projector.git`
 
 ### Author
 William Viker <<william.viker@gmail.com>>
 
 ### Changelog
-* 0.0.1 Placeholder
+* 1.0.0 Initial beta

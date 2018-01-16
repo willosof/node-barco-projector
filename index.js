@@ -89,6 +89,11 @@ var barcoProjector = function() {
 			self.connect(self.ip);
 		};
 
+		self.disconnect = function() {
+			if (self.socket !== undefined) { self.socket.destroy(); }
+			self.connected = false;
+		}
+
 		self.processData = function(data) {
 
 			var self = this;
