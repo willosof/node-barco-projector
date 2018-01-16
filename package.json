@@ -1,6 +1,6 @@
 {
   "name": "barco-projector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Unofficial Node.js API for Barco UDX/HDF/HDX/HDQ projectors",
   "main": "index.js",
   "scripts": {

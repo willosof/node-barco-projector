@@ -3,9 +3,9 @@
 [![Dependency Status](https://david-dm.org/willosof/barco-projector.svg)](https://david-dm.org/willosof/barco-projector)
 [![Build Status](https://travis-ci.org/willosof/barco-projector.svg?branch=master)](https://travis-ci.org/willosof/barco-projector)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-[![GitHub issues](https://img.shields.io/github/issues/willosof/barco-projector.svg?style=plastic)](https://github.com/willosof/barco-projector/issues)
-[![GitHub forks](https://img.shields.io/github/forks/willosof/barco-projector.svg?style=plastic)](https://github.com/willosof/barco-projector/network)
-[![GitHub stars](https://img.shields.io/github/stars/willosof/barco-projector.svg?style=plastic)](https://github.com/willosof/barco-projector/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/willosof/node-barco-projector.svg?style=plastic)](https://github.com/willosof/node-barco-projector/issues)
+[![GitHub forks](https://img.shields.io/github/forks/willosof/node-barco-projector.svg?style=plastic)](https://github.com/willosof/node-barco-projector/network)
+[![GitHub stars](https://img.shields.io/github/stars/willosof/node-barco-projector.svg?style=plastic)](https://github.com/willosof/node-barco-projector/stargazers)
 
 ## Features
 
@@ -50,3 +50,4 @@ William Viker <<william.viker@gmail.com>>
 
 ### Changelog
 * 1.0.0 Initial beta
+* 1.0.1 Fix broken links in README
